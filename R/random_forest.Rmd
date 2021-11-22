@@ -8,7 +8,45 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
-plot(cars)
+# bring in data and inspect data
+```
+```{r}
+#EDA
+
+# initial Feature Engineering
+#for continuous to numeric e.g the total energy consumption to num_of_households do boxplots
+
+#for categorical data can utilise heat map to see relationship
+
+
+```
+
+```{r}
+#seed split(train-test 70:30)
+
+#train: 70 train: 30 validation
+
+#basic Random Forest 
+
+#hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
+
+
+```
+```{r}
+#tuning hyper paraemeters es use(Caret) do gridsearch,for loop, random search
+
+
+```
+```{r}
+#model eavalution
+#accuracy, Confusion matrix, recall and precision 
+```
+
+```{r}
+#cross validation with validation data
+#ensure you discuss that random forest isnnot intutative.
+
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.

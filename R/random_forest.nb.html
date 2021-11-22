@@ -219,8 +219,54 @@ pre code {
 <p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
-<pre class="r"><code>plot(cars)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBicmluZyBpbiBkYXRhIGFuZCBpbnNwZWN0IGRhdGFcbmBgYCJ9 -->
+<pre class="r"><code># bring in data and inspect data</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0VEQVxuXG4jIGluaXRpYWwgRmVhdHVyZSBFbmdpbmVlcmluZ1xuI2ZvciBjb250aW51b3VzIHRvIG51bWVyaWMgZS5nIHRoZSB0b3RhbCBlbmVyZ3kgY29uc3VtcHRpb24gdG8gbnVtX29mX2hvdXNlaG9sZHMgZG8gYm94cGxvdHNcblxuI2ZvciBjYXRlZ29yaWNhbCBkYXRhIGNhbiB1dGlsaXNlIGhlYXQgbWFwIHRvIHNlZSByZWxhdGlvbnNoaXBcblxuXG5gYGAifQ== -->
+<pre class="r"><code>#EDA
+
+# initial Feature Engineering
+#for continuous to numeric e.g the total energy consumption to num_of_households do boxplots
+
+#for categorical data can utilise heat map to see relationship
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlZWQgc3BsaXQodHJhaW4tdGVzdCA3MDozMClcblxuI3RyYWluOiA3MCB0cmFpbjogMzAgdmFsaWRhdGlvblxuXG4jYmFzaWMgUmFuZG9tIEZvcmVzdCBcblxuI2h5cGVyIHBhcmFtZXRlcnM6IG50cmVlIGFuZCBtdHJ5KG51bWJlciBvZiBmZWF0dXJlcyB0byBkbyksIGFkZCBpbXBvcnRhbmNlID0gVFJVRVxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>#seed split(train-test 70:30)
+
+#train: 70 train: 30 validation
+
+#basic Random Forest 
+
+#hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3R1bmluZyBoeXBlciBwYXJhZW1ldGVycyBlcyB1c2UoQ2FyZXQpIGRvIGdyaWRzZWFyY2gsZm9yIGxvb3AsIHJhbmRvbSBzZWFyY2hcblxuXG5gYGAifQ== -->
+<pre class="r"><code>#tuning hyper paraemeters es use(Caret) do gridsearch,for loop, random search
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI21vZGVsIGVhdmFsdXRpb25cbiNhY2N1cmFjeSwgQ29uZnVzaW9uIG1hdHJpeCwgcmVjYWxsIGFuZCBwcmVjaXNpb24gXG5gYGAifQ== -->
+<pre class="r"><code>#model eavalution
+#accuracy, Confusion matrix, recall and precision </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2Nyb3NzIHZhbGlkYXRpb24gd2l0aCB2YWxpZGF0aW9uIGRhdGFcbiNlbnN1cmUgeW91IGRpc2N1c3MgdGhhdCByYW5kb20gZm9yZXN0IGlzbm5vdCBpbnR1dGF0aXZlLlxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>#cross validation with validation data
+#ensure you discuss that random forest isnnot intutative.
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -229,7 +275,7 @@ pre code {
 <p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQpwbG90KGNhcnMpDQpgYGANCg0KQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkN0cmwrQWx0K0kqLg0KDQpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkN0cmwrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4NCg0KVGhlIHByZXZpZXcgc2hvd3MgeW91IGEgcmVuZGVyZWQgSFRNTCBjb3B5IG9mIHRoZSBjb250ZW50cyBvZiB0aGUgZWRpdG9yLiBDb25zZXF1ZW50bHksIHVubGlrZSAqS25pdCosICpQcmV2aWV3KiBkb2VzIG5vdCBydW4gYW55IFIgY29kZSBjaHVua3MuIEluc3RlYWQsIHRoZSBvdXRwdXQgb2YgdGhlIGNodW5rIHdoZW4gaXQgd2FzIGxhc3QgcnVuIGluIHRoZSBlZGl0b3IgaXMgZGlzcGxheWVkLg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQojIGJyaW5nIGluIGRhdGEgYW5kIGluc3BlY3QgZGF0YQ0KYGBgDQpgYGB7cn0NCiNFREENCg0KIyBpbml0aWFsIEZlYXR1cmUgRW5naW5lZXJpbmcNCiNmb3IgY29udGludW91cyB0byBudW1lcmljIGUuZyB0aGUgdG90YWwgZW5lcmd5IGNvbnN1bXB0aW9uIHRvIG51bV9vZl9ob3VzZWhvbGRzIGRvIGJveHBsb3RzDQoNCiNmb3IgY2F0ZWdvcmljYWwgZGF0YSBjYW4gdXRpbGlzZSBoZWF0IG1hcCB0byBzZWUgcmVsYXRpb25zaGlwDQoNCg0KYGBgDQoNCmBgYHtyfQ0KI3NlZWQgc3BsaXQodHJhaW4tdGVzdCA3MDozMCkNCg0KI3RyYWluOiA3MCB0cmFpbjogMzAgdmFsaWRhdGlvbg0KDQojYmFzaWMgUmFuZG9tIEZvcmVzdCANCg0KI2h5cGVyIHBhcmFtZXRlcnM6IG50cmVlIGFuZCBtdHJ5KG51bWJlciBvZiBmZWF0dXJlcyB0byBkbyksIGFkZCBpbXBvcnRhbmNlID0gVFJVRQ0KDQoNCmBgYA0KYGBge3J9DQojdHVuaW5nIGh5cGVyIHBhcmFlbWV0ZXJzIGVzIHVzZShDYXJldCkgZG8gZ3JpZHNlYXJjaCxmb3IgbG9vcCwgcmFuZG9tIHNlYXJjaA0KDQoNCmBgYA0KYGBge3J9DQojbW9kZWwgZWF2YWx1dGlvbg0KI2FjY3VyYWN5LCBDb25mdXNpb24gbWF0cml4LCByZWNhbGwgYW5kIHByZWNpc2lvbiANCmBgYA0KDQpgYGB7cn0NCiNjcm9zcyB2YWxpZGF0aW9uIHdpdGggdmFsaWRhdGlvbiBkYXRhDQojZW5zdXJlIHlvdSBkaXNjdXNzIHRoYXQgcmFuZG9tIGZvcmVzdCBpc25ub3QgaW50dXRhdGl2ZS4NCg0KDQpgYGANCg0KQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkN0cmwrQWx0K0kqLg0KDQpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkN0cmwrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4NCg0KVGhlIHByZXZpZXcgc2hvd3MgeW91IGEgcmVuZGVyZWQgSFRNTCBjb3B5IG9mIHRoZSBjb250ZW50cyBvZiB0aGUgZWRpdG9yLiBDb25zZXF1ZW50bHksIHVubGlrZSAqS25pdCosICpQcmV2aWV3KiBkb2VzIG5vdCBydW4gYW55IFIgY29kZSBjaHVua3MuIEluc3RlYWQsIHRoZSBvdXRwdXQgb2YgdGhlIGNodW5rIHdoZW4gaXQgd2FzIGxhc3QgcnVuIGluIHRoZSBlZGl0b3IgaXMgZGlzcGxheWVkLg0K</div>
 
 
 
