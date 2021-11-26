@@ -1,6 +1,7 @@
 ---
 title: "R Notebook"
 output: html_notebook
+Author: "Ayokunle Arikawe"
 ---
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
@@ -19,9 +20,7 @@ sk_df <- read_csv("C:/Users/Admin/EDA-Project/data/sKor_data_tot_v02.csv")
 
 ```
 ```{r}
-#EDA
-
-# initial Feature Engineering
+#EDA ad # initial Feature Engineering
 #for continuous to numeric e.g the total energy consumption to num_of_households do boxplots
 
 #for categorical data can utilise heat map to see relationship
@@ -191,8 +190,8 @@ fit_rf <- train(num_tot_energy_heat~.,
 
 predictions <- predict(fit_rf, TrainSet, type = 'response')
 
-#importance
-
+#importance of certain features
+varImpPlot(fit_rf)
 
 #plot residuals
 
