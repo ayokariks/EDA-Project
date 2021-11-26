@@ -26,25 +26,53 @@ test <- df %>% slice(-train_index)
 
 #rpart tuning parameters: cp, minsplit, minbucket, maxdepth
 #see rpart.control for explanations
+#cp - most important - decides no. of splits in a tree
+      # and therefore affects the rest of them i guess
+#maxdepth - maximum depth of any node of the final tree (meaning?)
+#minbucket is automatically minsplit/3
 
 #cross validation to pick the best tuning parameters
 
 train_rpart <- train(num_tot_energy_heat ~ ., 
                      method = "rpart",
                      tuneGrid = data.frame(cp = seq(0, 0.05, len = 25)),
+                     trControl = trainControl(method = "repeatedcv",
+                                  number = 10),
                      data = train)
+
 best_cp <- train_rpart$bestTune
-train_rpart[["finalModel"]][["cptable"]]
+#bestTune before = 0.00625 (before change to factors)
+#then = 0.008333333[5] RMSE 5026
+#currently = 0.0041666 [3] RMSE 4927.586 (after cross validation)
+
+#very rudimentary way of sourcing the row with the best cp but oh well
+train_rpart[["results"]][3,]
+
+y_hat <- predict(train_rpart, newdata = train, type = "raw")
+
+#use vector if its a regression tree, and class if its a classification tree
+# also: thought i could just extract final model from caret and use for predications
+# but apparently not? caret_fit <- train_rpart$finalModel 
+# use full trian_rpart
+
 
 plot(train_rpart$finalModel, margin = 0.1)
 text(train_rpart$finalModel, cex = 0.75)
 
+results <- train %>% transmute(
+  actual = num_tot_energy_heat,
+  predicted = y_hat,
+  error = actual-predicted
+)
 
-#bestTune before = 0.00625
-#now 0.008333333
+
+
+
 
 #creating a hypergrid that we can then use to tune rpart for minsplit
 #and maxdepth
+#honestly not sure if this is worth it, as this happens outside caret and 
+#cp is most important 
 
 hyper_grid <- expand.grid(
   minsplit = seq(20, 60, 1),
@@ -92,7 +120,3 @@ hyper_grid %>%
   top_n(-5, wt = error)
 
 #right now, very high errors lol
-
-# ctrl <- trainControl(method = "repeatedcv",
-                    # number = 10,
-                    # repeats = 3)
