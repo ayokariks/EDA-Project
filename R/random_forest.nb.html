@@ -219,7 +219,7 @@ pre code {
 <p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGNhcmV0KVxubGlicmFyeShycGFydClcbmxpYnJhcnkoYnJvb20pXG5saWJyYXJ5KHJwYXJ0KVxubGlicmFyeShyYW5kb21Gb3Jlc3QpXG4jIGJyaW5nIGluIGRhdGEgYW5kIGluc3BlY3QgZGF0YVxuc2tfZGYgPC0gcmVhZF9jc3YoXCJDOi9Vc2Vycy9BZG1pbi9FREEtUHJvamVjdC9kYXRhL3NLb3JfZGF0YV90b3RfdjAyLmNzdlwiKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGNhcmV0KVxubGlicmFyeShycGFydClcbmxpYnJhcnkoYnJvb20pXG5saWJyYXJ5KHJwYXJ0KVxubGlicmFyeShyYW5kb21Gb3Jlc3QpXG4jIGJyaW5nIGluIGRhdGEgYW5kIGluc3BlY3QgZGF0YVxuI21ha2UgY2F0ZWdvcnkgKGZhY3RvcnMpXG5za19kZiA8LSByZWFkX2NzdihcIkM6L1VzZXJzL0FkbWluL0VEQS1Qcm9qZWN0L2RhdGEvc0tvcl9kYXRhX3RvdF92MDIuY3N2XCIpXG5zdW1tYXJ5KHNrX2RmKVxuXG5gYGAifQ== -->
 <pre class="r"><code>library(tidyverse)
 library(caret)
 library(rpart)
@@ -227,146 +227,203 @@ library(broom)
 library(rpart)
 library(randomForest)
 # bring in data and inspect data
-sk_df &lt;- read_csv(&quot;C:/Users/Admin/EDA-Project/data/sKor_data_tot_v02.csv&quot;)</code></pre>
+#make category (factors)
+sk_df &lt;- read_csv(&quot;C:/Users/Admin/EDA-Project/data/sKor_data_tot_v02.csv&quot;)
+summary(sk_df)
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOlxuKiBgYCAtPiAuLi4xXG4ifQ== -->
-<pre><code>New names:
-* `` -&gt; ...1</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNzQxMCBDb2x1bW5zOiAyM1xuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAgKDIpOiBpZF9ocywgaWRfaGhcbmRibCAoMjEpOiAuLi4xLCBjYXRfbG9jX2RpdiwgY2F0X3N6X2N0eSwgY2F0X2h1c190eXAsIG51bV8uLi5cblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 7410 Columns: 23
--- Column specification --------------------------------------
-Delimiter: &quot;,&quot;
-chr  (2): id_hs, id_hh
-dbl (21): ...1, cat_loc_div, cat_sz_cty, cat_hus_typ, num_...
-
-i Use `spec()` to retrieve the full column specification for this data.
-i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0VEQVxuXG4jIGluaXRpYWwgRmVhdHVyZSBFbmdpbmVlcmluZ1xuI2ZvciBjb250aW51b3VzIHRvIG51bWVyaWMgZS5nIHRoZSB0b3RhbCBlbmVyZ3kgY29uc3VtcHRpb24gdG8gbnVtX29mX2hvdXNlaG9sZHMgZG8gYm94cGxvdHNcblxuI2ZvciBjYXRlZ29yaWNhbCBkYXRhIGNhbiB1dGlsaXNlIGhlYXQgbWFwIHRvIHNlZSByZWxhdGlvbnNoaXBcblxuXG5gYGBcbmBgYCJ9 -->
-<pre class="r"><code>```r
-#EDA
-
-# initial Feature Engineering
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0VEQSBhZCAjIGluaXRpYWwgRmVhdHVyZSBFbmdpbmVlcmluZ1xuI2ZvciBjb250aW51b3VzIHRvIG51bWVyaWMgZS5nIHRoZSB0b3RhbCBlbmVyZ3kgY29uc3VtcHRpb24gdG8gbnVtX29mX2hvdXNlaG9sZHMgZG8gYm94cGxvdHNcblxuI2ZvciBjYXRlZ29yaWNhbCBkYXRhIGNhbiB1dGlsaXNlIGhlYXQgbWFwIHRvIHNlZSByZWxhdGlvbnNoaXBcblxuXG5gYGAifQ== -->
+<pre class="r"><code>#EDA ad # initial Feature Engineering
 #for continuous to numeric e.g the total energy consumption to num_of_households do boxplots
 
 #for categorical data can utilise heat map to see relationship
-</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlZWQgc3BsaXQodHJhaW4tdGVzdCA3MDozMClcblxuI3RyYWluOiA3MCB0cmFpbjogMzAgdmFsaWRhdGlvblxuc2V0LnNlZWQoMTAwKVxudHJhaW4gPC0gc2FtcGxlKG5yb3coc2tfZGYpLCAwLjcqbnJvdyhza19kZiksIHJlcGxhY2UgPSBGQUxTRSlcblRyYWluU2V0IDwtIHNrX2RmW3RyYWluLF1cblRlc3RTZXQgPC0gc2tfZGZbLXRyYWluLF1cblxuXG4gICAgICAgIFxuI2Jhc2ljIFJhbmRvbSBGb3Jlc3QgdHJhaW4gYW5kIGZpdFxuXG5SRk0gPC0gcmFuZG9tRm9yZXN0KG51bV90b3RfZW5lcmd5X2hlYXR+LiwgZGF0YT1UcmFpblNldCwgbXRyeT0xMylcbmBgYCJ9 --&gt;
-
-```r
-#seed split(train-test 70:30)
-
-#train: 70 train: 30 validation
-set.seed(100)
-train &lt;- sample(nrow(sk_df), 0.7*nrow(sk_df), replace = FALSE)
-TrainSet &lt;- sk_df[train,]
-TestSet &lt;- sk_df[-train,]
-
-        
-#basic Random Forest train and fit
-
-RFM &lt;- randomForest(num_tot_energy_heat~., data=TrainSet, mtry=13)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI3R1bmluZyBoeXBlciBwYXJhZW1ldGVycyBlcyB1c2UoQ2FyZXQpIGRvIGdyaWRzZWFyY2gsZm9yIGxvb3AsIHJhbmRvbSBzZWFyY2hcblxuXG5gYGBcbmBgYCJ9 -->
-<pre class="r"><code>```r
-#tuning hyper paraemeters es use(Caret) do gridsearch,for loop, random search
-</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI21vZGVsIGVhdmFsdXRpb25cbiNhY2N1cmFjeSwgQ29uZnVzaW9uIG1hdHJpeCwgcmVjYWxsIGFuZCBwcmVjaXNpb24gXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-#model eavalution
-#accuracy, Confusion matrix, recall and precision </code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmZfZGVmYXVsdCA8LSB0cmFpbihudW1fdG90X2VuZXJneV9oZWF0fi4sXG4gICAgICAgICAgICAgICAgICAgIGRhdGEgPSBUcmFpblNldCxcbiAgICAgICAgICAgICAgICAgICAgbWV0aG9kID0gXCJyZlwiLFxuICAgICAgICAgICAgICAgICAgICBtZXRyaWMgPSBDKFwiUk1TRVwiLCBcIlJzcXVhcmVkXCIpLFxuICAgICAgICAgICAgICAgICAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2xcbiAgICAgICAgICAgICAgICAgICAgKVxuXG5gYGAifQ== --&gt;
-
-```r
-rf_default &lt;- train(num_tot_energy_heat~.,
-                    data = TrainSet,
-                    method = &quot;rf&quot;,
-                    metric = C(&quot;RMSE&quot;, &quot;Rsquared&quot;),
-                    trcontrol = trcontrol
-                    )
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gQyhcIlJNU0VcIiwgXCJSc3F1YXJlZFwiKSA6IG9iamVjdCBub3QgaW50ZXJwcmV0YWJsZSBhcyBhIGZhY3RvclxuIn0= -->
-<pre><code>Error in C(&quot;RMSE&quot;, &quot;Rsquared&quot;) : object not interpretable as a factor</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBmb3IgYmVzdCBtdHJ5KDE6MTgpXG5cbmBgYCJ9 -->
-<pre class="r"><code>#search for best mtry(1:18)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBiZXN0IG1heCBub2Rlc1xuXG5gYGAifQ== -->
-<pre class="r"><code>#search best max nodes
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBiZXN0IG1heCBub2Rlc1xuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlZWQgc3BsaXQodHJhaW4tdGVzdCA3MDozMClcblxuI3RyYWluOiA3MCB0cmFpbjogMzAgdmFsaWRhdGlvblxuc2V0LnNlZWQoMTAwKVxudHJhaW4gPC0gc2FtcGxlKG5yb3coc2tfZGYpLCAwLjcqbnJvdyhza19kZiksIHJlcGxhY2UgPSBGQUxTRSlcbnRyYWluaW5nX3NldDwtIHNrX2RmW3RyYWluLF1cbnRlc3Rpbmdfc2V0IDwtIHNrX2RmWy10cmFpbixdXG5cblxuICAgICAgICBcbiNiYXNpYyBSYW5kb20gRm9yZXN0IHRyYWluIGFuZCBmaXRcblxuUkZNIDwtIHJhbmRvbUZvcmVzdChudW1fdG90X2VuZXJneV9oZWF0fi4sIGRhdGE9dHJhaW5pbmdfc2V0KVxuXG5wcmVkaWN0aW9ucyA8LSBwcmVkaWN0KFJGTSx0cmFpbmluZ19zZXQsIHR5cGUgPSAncmVzcG9uc2UnKVxuXG5cbiNldmFsdWF0aW9ucyBvZiBwcmVkaWN0aW9uc1xudHJhaW5fcHJlZGljdGlvbnMgPC0gdHJhaW5pbmdfc2V0JT4lXG4gIHRyYW5zbXV0ZShcbiAgICAgICAgYWN0dWFsID0gbnVtX3RvdF9lbmVyZ3lfaGVhdCxcbiAgICAgICAgcHJlZGljdGVkID0gcHJlZGljdGlvbnNcbiAgICAgICAgKVxuXG5cbnJtc2UgPC0gZnVuY3Rpb24oYWN0dWFsLCBwcmVkaWN0ZWQpe1xuICBtc2UgPC0gbWVhbigoYWN0dWFsIC0gcHJlZGljdGVkKSAqKiAyKVxuICByZXR1cm4oc3FydChtc2UpKVxufVxuXG5cbnByZWRpY3Rpb25zIDwtIHRyYWluX3ByZWRpY3Rpb25zICU+JSBtdXRhdGUocm1zZT1ybXNlKGFjdHVhbCxwcmVkaWN0ZWQpLCBkaWZmZXJlbmNlID0gYWN0dWFsLXByZWRpY3RlZCkgXG5cblxuI2h5cGVyIHBhcmFtZXRlcnM6IG50cmVlIGFuZCBtdHJ5KG51bWJlciBvZiBmZWF0dXJlcyB0byBkbyksIGFkZCBpbXBvcnRhbmNlID0gVFJVRVxuXG5cblxuYGBgIn0= -->
+<pre class="r"><code>#seed split(train-test 70:30)
+
+#train: 70 train: 30 validation
+set.seed(100)
+train &lt;- sample(nrow(sk_df), 0.7*nrow(sk_df), replace = FALSE)
+training_set&lt;- sk_df[train,]
+testing_set &lt;- sk_df[-train,]
+
+        
+#basic Random Forest train and fit
+
+RFM &lt;- randomForest(num_tot_energy_heat~., data=training_set)
+
+predictions &lt;- predict(RFM,training_set, type = &#39;response&#39;)
+
+
+#evaluations of predictions
+train_predictions &lt;- training_set%&gt;%
+  transmute(
+        actual = num_tot_energy_heat,
+        predicted = predictions
+        )
+
+
+rmse &lt;- function(actual, predicted){
+  mse &lt;- mean((actual - predicted) ** 2)
+  return(sqrt(mse))
+}
+
+
+predictions &lt;- train_predictions %&gt;% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
+
+
+#hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2Nyb3NzIHZhbGlkYXRpb24gd2l0aCB2YWxpZGF0aW9uIGRhdGFcbiNlbnN1cmUgeW91IGRpc2N1c3MgdGhhdCByYW5kb20gZm9yZXN0IGlzbm5vdCBpbnR1dGF0aXZlLlxuXG5saWJyYXJ5KGUxMDcxKVxuI2stZm9sZCBjcm9zcyB2YWxpZGF0aW9uXG50cmNvbnRyb2wgPC0gdHJhaW5Db250cm9sKG1ldGhvZCA9IFwiY3ZcIiwgbnVtYmVyID0gMTAsc2VhcmNoPVwiZ3JpZFwiKVxuXG5cbnNldC5zZWVkKDEwMClcblxucmZfZGVmYXVsdCA8LSB0cmFpbihudW1fdG90X2VuZXJneV9oZWF0fi4sXG4gICAgICAgICAgICAgICAgICAgIGRhdGEgPSB0cmFpbmluZ19zZXQsXG4gICAgICAgICAgICAgICAgICAgIG1ldGhvZCA9IFwicmZcIixcbiAgICAgICAgICAgICAgICAgICAgbWV0cmljID0gXCJSTVNFXCIsXG4gICAgICAgICAgICAgICAgICAgIHRyY29udHJvbCA9IHRyY29udHJvbFxuICAgICAgICAgICAgICAgICAgICApXG5gYGAifQ== -->
+<pre class="r"><code>#cross validation with validation data
+#ensure you discuss that random forest isnnot intutative.
+
+library(e1071)
+#k-fold cross validation
+trcontrol &lt;- trainControl(method = &quot;cv&quot;, number = 10,search=&quot;grid&quot;)
+
+
+set.seed(100)
+
+rf_default &lt;- train(num_tot_energy_heat~.,
+                    data = training_set,
+                    method = &quot;rf&quot;,
+                    metric = &quot;RMSE&quot;,
+                    trcontrol = trcontrol
+                    )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBmb3IgYmVzdCBtdHJ5KDE6MTgpXG4jcnVuIHRoZW0gYXQgc2FtZSB0aW1lKG10cnksIG50cmVlLCBtYXhub2RlcylcbiNhZGQgdGhlIHNlcXVlbmNlIFxudHVuZUdyaWQgPC0gZXhwYW5kLmdyaWQoLm10cnkgPSBjKDE6IDE4KSlcbnJmX210cnkgPC0gdHJhaW4obnVtX3RvdF9lbmVyZ3lfaGVhdH4sXG4gICAgZGF0YSA9IHRyYWluaW5nX3NldCxcbiAgICBtZXRob2QgPSBcInJmXCIsXG4gICAgbWV0cmljID0gXCJSTVNFXCIsXG4gICAgdHVuZUdyaWQgPSB0dW5lR3JpZCxcbiAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2wsXG4gICAgaW1wb3J0YW5jZSA9IFRSVUUsXG4gICAgbm9kZXNpemUgPSAxNCxcbiAgICBudHJlZSA9IDMwMClcbnByaW50KHJmX210cnkpXG5cbiNiZXN0IHZhbHVlIGZvciBtdHJ5IGJhc2VkIG9uIGJlc3QgUk1TRVxuYmVzdF9tdHJ5IDwtIHJmX210cnkkYmVzdFR1bmUkbXRyeVxuYGBgIn0= -->
+<pre class="r"><code>#search for best mtry(1:18)
+#run them at same time(mtry, ntree, maxnodes)
+#add the sequence 
+tuneGrid &lt;- expand.grid(.mtry = c(1: 18))
+rf_mtry &lt;- train(num_tot_energy_heat~,
+    data = training_set,
+    method = &quot;rf&quot;,
+    metric = &quot;RMSE&quot;,
+    tuneGrid = tuneGrid,
+    trcontrol = trcontrol,
+    importance = TRUE,
+    nodesize = 14,
+    ntree = 300)
+print(rf_mtry)
+
+#best value for mtry based on best RMSE
+best_mtry &lt;- rf_mtry$bestTune$mtry</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBiZXN0IG1heCBub2Rlc1xuc3RvcmVfbWF4bm9kZSA8LSBsaXN0KClcbnR1bmVHcmlkIDwtIGV4cGFuZC5ncmlkKC5tdHJ5ID0gYmVzdF9tdHJ5KVxuZm9yIChtYXhub2RlcyBpbiBjKDU6IDE1KSkge1xuICAgIHJmX21heG5vZGUgPC0gdHJhaW4obnVtX3RvdF9lbmVyZ3lfaGVhdH4uLFxuICAgICAgICBkYXRhID0gdHJhaW5pbmdfc2V0LFxuICAgICAgICBtZXRob2QgPSBcInJmXCIsXG4gICAgICAgIG1ldHJpYyA9IFwiUk1TRVwiLFxuICAgICAgICB0dW5lR3JpZCA9IHR1bmVHcmlkLFxuICAgICAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2wsXG4gICAgICAgIGltcG9ydGFuY2UgPSBUUlVFLFxuICAgICAgICBub2Rlc2l6ZSA9IG4sXG4gICAgICAgIG1heG5vZGVzID0gbWF4bm9kZXMsXG4gICAgICAgIG50cmVlID1uKVxuICAgIGN1cnJlbnRfaXRlcmF0aW9uIDwtIHRvU3RyaW5nKG1heG5vZGVzKVxuICAgIHN0b3JlX21heG5vZGVbW2N1cnJlbnRfaXRlcmF0aW9uXV0gPC0gcmZfbWF4bm9kZVxufVxucmVzdWx0c19tdHJ5IDwtIHJlc2FtcGxlcyhzdG9yZV9tYXhub2RlKVxuc3VtbWFyeShyZXN1bHRzX210cnkpXG4jU0VMRUNUTUFYIG5vZGVcbmBgYCJ9 -->
 <pre class="r"><code>#search best max nodes
+store_maxnode &lt;- list()
+tuneGrid &lt;- expand.grid(.mtry = best_mtry)
+for (maxnodes in c(5: 15)) {
+    rf_maxnode &lt;- train(num_tot_energy_heat~.,
+        data = training_set,
+        method = &quot;rf&quot;,
+        metric = &quot;RMSE&quot;,
+        tuneGrid = tuneGrid,
+        trcontrol = trcontrol,
+        importance = TRUE,
+        nodesize = n,
+        maxnodes = maxnodes,
+        ntree =n)
+    current_iteration &lt;- toString(maxnodes)
+    store_maxnode[[current_iteration]] &lt;- rf_maxnode
+}
+results_mtry &lt;- resamples(store_maxnode)
+summary(results_mtry)
+#SELECTMAX node</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBiZXN0IG50cmVlc1xuc3RvcmVfbWF4dHJlZXMgPC0gbGlzdCgpXG5mb3IgKG50cmVlIGluIGMoMjUwLCAzMDAsIDM1MCwgNDAwLCA0NTAsIDUwMCwgNTUwLCA2MDAsIDgwMCwgMTAwMCwgMjAwMCkpIHtcbiAgICBzZXQuc2VlZCg1Njc4KVxuICAgIHJmX21heHRyZWVzIDwtIHRyYWluKG51bV90b3RfZW5lcmd5X2hlYXR+LixcbiAgICAgICAgZGF0YSA9IHRyYWluaW5nX3NldCxcbiAgICAgICAgbWV0aG9kID0gXCJyZlwiLFxuICAgICAgICBtZXRyaWMgPSBcIlJNU0VcIixcbiAgICAgICAgdHVuZUdyaWQgPSB0dW5lR3JpZCxcbiAgICAgICAgdHJjb250cm9sID0gdHJjb250cm9sLFxuICAgICAgICBpbXBvcnRhbmNlID0gVFJVRSxcbiAgICAgICAgbm9kZXNpemUgPSBuLFxuICAgICAgICBtYXhub2RlcyA9IG4sXG4gICAgICAgIG50cmVlID0gbnRyZWUpXG4gICAga2V5IDwtIHRvU3RyaW5nKG50cmVlKVxuICAgIHN0b3JlX21heHRyZWVzW1trZXldXSA8LSByZl9tYXh0cmVlc1xufVxucmVzdWx0c190cmVlIDwtIHJlc2FtcGxlcyhzdG9yZV9tYXh0cmVlcylcbnN1bW1hcnkocmVzdWx0c190cmVlKVxuXG5gYGAifQ== -->
+<pre class="r"><code>#search best ntrees
+store_maxtrees &lt;- list()
+for (ntree in c(250, 300, 350, 400, 450, 500, 550, 600, 800, 1000, 2000)) {
+    set.seed(5678)
+    rf_maxtrees &lt;- train(num_tot_energy_heat~.,
+        data = training_set,
+        method = &quot;rf&quot;,
+        metric = &quot;RMSE&quot;,
+        tuneGrid = tuneGrid,
+        trcontrol = trcontrol,
+        importance = TRUE,
+        nodesize = n,
+        maxnodes = n,
+        ntree = ntree)
+    key &lt;- toString(ntree)
+    store_maxtrees[[key]] &lt;- rf_maxtrees
+}
+results_tree &lt;- resamples(store_maxtrees)
+summary(results_tree)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlYXJjaCBiZXN0IG4gdHJlZXNcblxuYGBgIn0= -->
-<pre class="r"><code>#search best n trees
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2ZpbmFsIG1vZGVsIHdpdGggaHlwYXJhbWV0ZXJzXG5maXRfcmYgPC0gdHJhaW4obnVtX3RvdF9lbmVyZ3lfaGVhdH4uLFxuICAgIGRhdGFfdHJhaW4sXG4gICAgbWV0aG9kID0gXCJyZlwiLFxuICAgIG1ldHJpYyA9IFwiUk1TRVwiLFxuICAgIHR1bmVHcmlkID0gdHVuZUdyaWQsXG4gICAgdHJjb250cm9sID0gdHJjb250cm9sLFxuICAgIGltcG9ydGFuY2UgPSBUUlVFLFxuICAgIG5vZGVzaXplID0gbixcbiAgICBudHJlZSA9IG4sXG4gICAgbWF4bm9kZXMgPSBuKVxuXG5gYGAifQ== -->
+<pre class="r"><code>#final model with hyparameters
+fit_rf &lt;- train(num_tot_energy_heat~.,
+    data_train,
+    method = &quot;rf&quot;,
+    metric = &quot;RMSE&quot;,
+    tuneGrid = tuneGrid,
+    trcontrol = trcontrol,
+    importance = TRUE,
+    nodesize = n,
+    ntree = n,
+    maxnodes = n)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2V2YWx1dGF0ZSBtb2RlbCwgaW1wb3J0YW5jZSBhbmQgcmVzaWR1YWxzXG5cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2V2YWx1dGF0ZSBtb2RlbCwgaW1wb3J0YW5jZSBhbmQgcmVzaWR1YWxzXG5cbnByZWRpY3Rpb25zIDwtIHByZWRpY3QoZml0X3JmLCB0cmFpbmluZ19zZXQsIHR5cGUgPSAncmVzcG9uc2UnKVxuXG4jaW1wb3J0YW5jZSBvZiBjZXJ0YWluIGZlYXR1cmVzXG52YXJJbXBQbG90KGZpdF9yZilcblxuI3Bsb3QgcmVzaWR1YWxzXG5cbnRyYWluX3ByZWRpY3Rpb25zIDwtIFRyYWluU2V0JT4lXG4gIHRyYW5zbXV0ZShcbiAgICAgICAgYWN0dWFsID0gbnVtX3RvdF9lbmVyZ3lfaGVhdCxcbiAgICAgICAgcHJlZGljdGVkID0gcHJlZGljdGlvbnNcbiAgICAgICAgKVxuXG5cbnJtc2UgPC0gZnVuY3Rpb24oYWN0dWFsLCBwcmVkaWN0ZWQpe1xuICBtc2UgPC0gbWVhbigoYWN0dWFsIC0gcHJlZGljdGVkKSAqKiAyKVxuICByZXR1cm4oc3FydChtc2UpKVxufVxuXG5cbnByZWRpY3Rpb25zIDwtIHRyYWluX3ByZWRpY3Rpb25zICU+JSBtdXRhdGUocm1zZT1ybXNlKGFjdHVhbCxwcmVkaWN0ZWQpLCBkaWZmZXJlbmNlID0gYWN0dWFsLXByZWRpY3RlZCkgXG5cblRyYWluU2V0IDwtIFRyYWluU2V0ICU+JSBcbiAgbXV0YXRlKHJlc2lkdWFsID0gcHJlZGljdGlvbnMgLSBudW1fdG90X2VuZXJneV9oZWF0KVxuXG4jeSBheGlzIHJtc2UsIHIyLCAgeCBheGlzLCB2cyBjb21wbGV4aXR5IG9mIHJhbmRvbSBmb3Jlc3QpIHNpbWlsYXIgdG8gayBtZWFuc1xuXG5gYGAifQ== -->
 <pre class="r"><code>#evalutate model, importance and residuals
+
+predictions &lt;- predict(fit_rf, training_set, type = &#39;response&#39;)
+
+#importance of certain features
+varImpPlot(fit_rf)
+
+#plot residuals
+
+train_predictions &lt;- TrainSet%&gt;%
+  transmute(
+        actual = num_tot_energy_heat,
+        predicted = predictions
+        )
+
+
+rmse &lt;- function(actual, predicted){
+  mse &lt;- mean((actual - predicted) ** 2)
+  return(sqrt(mse))
+}
+
+
+predictions &lt;- train_predictions %&gt;% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
+
+TrainSet &lt;- TrainSet %&gt;% 
+  mutate(residual = predictions - num_tot_energy_heat)
+
+#y axis rmse, r2,  x axis, vs complexity of random forest) similar to k means
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -376,7 +433,7 @@ rf_default &lt;- train(num_tot_energy_heat~.,
 <p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoY2FyZXQpDQpsaWJyYXJ5KHJwYXJ0KQ0KbGlicmFyeShicm9vbSkNCmxpYnJhcnkocnBhcnQpDQpsaWJyYXJ5KHJhbmRvbUZvcmVzdCkNCiMgYnJpbmcgaW4gZGF0YSBhbmQgaW5zcGVjdCBkYXRhDQpza19kZiA8LSByZWFkX2NzdigiQzovVXNlcnMvQWRtaW4vRURBLVByb2plY3QvZGF0YS9zS29yX2RhdGFfdG90X3YwMi5jc3YiKQ0KDQpgYGANCmBgYHtyfQ0KI0VEQQ0KDQojIGluaXRpYWwgRmVhdHVyZSBFbmdpbmVlcmluZw0KI2ZvciBjb250aW51b3VzIHRvIG51bWVyaWMgZS5nIHRoZSB0b3RhbCBlbmVyZ3kgY29uc3VtcHRpb24gdG8gbnVtX29mX2hvdXNlaG9sZHMgZG8gYm94cGxvdHMNCg0KI2ZvciBjYXRlZ29yaWNhbCBkYXRhIGNhbiB1dGlsaXNlIGhlYXQgbWFwIHRvIHNlZSByZWxhdGlvbnNoaXANCg0KDQpgYGANCg0KYGBge3J9DQojc2VlZCBzcGxpdCh0cmFpbi10ZXN0IDcwOjMwKQ0KDQojdHJhaW46IDcwIHRyYWluOiAzMCB2YWxpZGF0aW9uDQpzZXQuc2VlZCgxMDApDQp0cmFpbiA8LSBzYW1wbGUobnJvdyhza19kZiksIDAuNypucm93KHNrX2RmKSwgcmVwbGFjZSA9IEZBTFNFKQ0KVHJhaW5TZXQgPC0gc2tfZGZbdHJhaW4sXQ0KVGVzdFNldCA8LSBza19kZlstdHJhaW4sXQ0KDQoNCiAgICAgICAgDQojYmFzaWMgUmFuZG9tIEZvcmVzdCB0cmFpbiBhbmQgZml0DQoNClJGTSA8LSByYW5kb21Gb3Jlc3QobnVtX3RvdF9lbmVyZ3lfaGVhdH4uLCBkYXRhPVRyYWluU2V0LCBtdHJ5PTEzKQ0KDQpwcmVkaWN0aW9ucyA8LSBwcmVkaWN0KFJGTSwgVHJhaW5TZXQsIHR5cGUgPSAncmVzcG9uc2UnKQ0KDQoNCiNldmFsdWF0aW9ucyBvZiBwcmVkaWN0aW9ucw0KdHJhaW5fcHJlZGljdGlvbnMgPC0gVHJhaW5TZXQlPiUNCiAgdHJhbnNtdXRlKA0KICAgICAgICBhY3R1YWwgPSBudW1fdG90X2VuZXJneV9oZWF0LA0KICAgICAgICBwcmVkaWN0ZWQgPSBwcmVkaWN0aW9ucw0KICAgICAgICApDQoNCg0Kcm1zZSA8LSBmdW5jdGlvbihhY3R1YWwsIHByZWRpY3RlZCl7DQogIG1zZSA8LSBtZWFuKChhY3R1YWwgLSBwcmVkaWN0ZWQpICoqIDIpDQogIHJldHVybihzcXJ0KG1zZSkpDQp9DQoNCg0KcHJlZGljdGlvbnMgPC0gdHJhaW5fcHJlZGljdGlvbnMgJT4lIG11dGF0ZShybXNlPXJtc2UoYWN0dWFsLHByZWRpY3RlZCksIGRpZmZlcmVuY2UgPSBhY3R1YWwtcHJlZGljdGVkKSANCg0KVHJhaW5TZXQgPC0gVHJhaW5TZXQgJT4lIA0KICBtdXRhdGUocmVzaWR1YWwgPSBwcmVkaWN0aW9ucyAtIG51bV90b3RfZW5lcmd5X2hlYXQpDQoNCiNoeXBlciBwYXJhbWV0ZXJzOiBudHJlZSBhbmQgbXRyeShudW1iZXIgb2YgZmVhdHVyZXMgdG8gZG8pLCBhZGQgaW1wb3J0YW5jZSA9IFRSVUUNCg0KDQpgYGANCmBgYHtyfQ0KI3R1bmluZyBoeXBlciBwYXJhZW1ldGVycyBlcyB1c2UoQ2FyZXQpIGRvIGdyaWRzZWFyY2gsZm9yIGxvb3AsIHJhbmRvbSBzZWFyY2gNCg0KYGBgDQpgYGB7cn0NCiNtb2RlbCBlYXZhbHV0aW9uDQojYWNjdXJhY3ksIENvbmZ1c2lvbiBtYXRyaXgsIHJlY2FsbCBhbmQgcHJlY2lzaW9uIA0KYGBgDQoNCmBgYHtyfQ0KI2Nyb3NzIHZhbGlkYXRpb24gd2l0aCB2YWxpZGF0aW9uIGRhdGENCiNlbnN1cmUgeW91IGRpc2N1c3MgdGhhdCByYW5kb20gZm9yZXN0IGlzbm5vdCBpbnR1dGF0aXZlLg0KDQpsaWJyYXJ5KGUxMDcxKQ0KI2stZm9sZCBjcm9zcyB2YWxpZGF0aW9uDQp0cmNvbnRyb2wgPC0gdHJhaW5Db250cm9sKG1ldGhvZCA9ICJjdiIsIG51bWJlciA9IDEwLHNlYXJjaD0iZ3JpZCIpDQoNCg0Kc2V0LnNlZWQoMTAwKQ0KdHJhaW5fZGF0IDwtIHNhbXBsZShucm93KHNrX2RmKSwgMC43Km5yb3coc2tfZGYpLCByZXBsYWNlID0gRkFMU0UpDQpUcmFpblNldCA8LSBza19kZlt0cmFpbixdDQpUZXN0U2V0IDwtIHNrX2RmWy10cmFpbixdDQoNCnJmX2RlZmF1bHQgPC0gdHJhaW4obnVtX3RvdF9lbmVyZ3lfaGVhdH4uLA0KICAgICAgICAgICAgICAgICAgICBkYXRhID0gVHJhaW5TZXQsDQogICAgICAgICAgICAgICAgICAgIG1ldGhvZCA9ICJyZiIsDQogICAgICAgICAgICAgICAgICAgIG1ldHJpYyA9ICJSc3F1YXJlZCIsDQogICAgICAgICAgICAgICAgICAgIHRyY29udHJvbCA9IHRyY29udHJvbA0KICAgICAgICAgICAgICAgICAgICApDQoNCg0KcmZfcm1zZSA8LSB0cmFpbihudW1fdG90X2VuZXJneV9oZWF0fi4sDQogICAgICAgICAgICAgICAgICAgIGRhdGEgPSBUcmFpblNldCwNCiAgICAgICAgICAgICAgICAgICAgbWV0aG9kID0gInJmIiwNCiAgICAgICAgICAgICAgICAgICAgbWV0cmljID0gIlJNU0UiLA0KICAgICAgICAgICAgICAgICAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2wNCiAgICAgICAgICAgICAgICAgICAgKQ0KDQojSHlwYXJhbWV0cmlzZSAgdW1iZXIgb2YgZmVhdHVyZXMgdG8gc3Vic2V0KG10cnkpDQoNCiNyZl9kZWZhdWx0IDwtIHRyYWluKCkNCg0KDQoNCg0KYGBgDQpgYGB7cn0NCiNzZWFyY2ggZm9yIGJlc3QgbXRyeSgxOjE4KQ0KDQpgYGANCmBgYHtyfQ0KI3NlYXJjaCBiZXN0IG1heCBub2Rlcw0KDQpgYGANCg0KYGBge3J9DQojc2VhcmNoIGJlc3QgbWF4IG5vZGVzDQoNCmBgYA0KYGBge3J9DQojc2VhcmNoIGJlc3QgbiB0cmVlcw0KDQpgYGANCmBgYHtyfQ0KI2V2YWx1dGF0ZSBtb2RlbCwgaW1wb3J0YW5jZSBhbmQgcmVzaWR1YWxzDQoNCmBgYA0KDQoNCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDdHJsK0FsdCtJKi4NCg0KV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDdHJsK1NoaWZ0K0sqIHRvIHByZXZpZXcgdGhlIEhUTUwgZmlsZSkuDQoNClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4NCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCkF1dGhvcjogIkF5b2t1bmxlIEFyaWthd2UiDQotLS0NCg0KVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gDQoNClRyeSBleGVjdXRpbmcgdGhpcyBjaHVuayBieSBjbGlja2luZyB0aGUgKlJ1biogYnV0dG9uIHdpdGhpbiB0aGUgY2h1bmsgb3IgYnkgcGxhY2luZyB5b3VyIGN1cnNvciBpbnNpZGUgaXQgYW5kIHByZXNzaW5nICpDdHJsK1NoaWZ0K0VudGVyKi4gDQoNCmBgYHtyfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KGNhcmV0KQ0KbGlicmFyeShycGFydCkNCmxpYnJhcnkoYnJvb20pDQpsaWJyYXJ5KHJwYXJ0KQ0KbGlicmFyeShyYW5kb21Gb3Jlc3QpDQojIGJyaW5nIGluIGRhdGEgYW5kIGluc3BlY3QgZGF0YQ0KI21ha2UgY2F0ZWdvcnkgKGZhY3RvcnMpDQpza19kZiA8LSByZWFkX2NzdigiQzovVXNlcnMvQWRtaW4vRURBLVByb2plY3QvZGF0YS9zS29yX2RhdGFfdG90X3YwMi5jc3YiKQ0Kc3VtbWFyeShza19kZikNCg0KYGBgDQpgYGB7cn0NCiNFREEgYWQgIyBpbml0aWFsIEZlYXR1cmUgRW5naW5lZXJpbmcNCiNmb3IgY29udGludW91cyB0byBudW1lcmljIGUuZyB0aGUgdG90YWwgZW5lcmd5IGNvbnN1bXB0aW9uIHRvIG51bV9vZl9ob3VzZWhvbGRzIGRvIGJveHBsb3RzDQoNCiNmb3IgY2F0ZWdvcmljYWwgZGF0YSBjYW4gdXRpbGlzZSBoZWF0IG1hcCB0byBzZWUgcmVsYXRpb25zaGlwDQoNCg0KYGBgDQoNCmBgYHtyfQ0KI3NlZWQgc3BsaXQodHJhaW4tdGVzdCA3MDozMCkNCg0KIw0KI3RyYWluOiA3MCB0cmFpbjogMzAgdmFsaWRhdGlvbg0Kc2V0LnNlZWQoMTAwKQ0KdHJhaW4gPC0gc2FtcGxlKG5yb3coc2tfZGYpLCAwLjcqbnJvdyhza19kZiksIHJlcGxhY2UgPSBGQUxTRSkNCnRyYWluaW5nX3NldDwtIHNrX2RmW3RyYWluLF0NCnRlc3Rpbmdfc2V0IDwtIHNrX2RmWy10cmFpbixdDQoNCg0KICAgICAgICANCiNiYXNpYyBSYW5kb20gRm9yZXN0IHRyYWluIGFuZCBmaXQNCg0KUkZNIDwtIHJhbmRvbUZvcmVzdChudW1fdG90X2VuZXJneV9oZWF0fi4sIGRhdGE9dHJhaW5pbmdfc2V0KQ0KDQpwcmVkaWN0aW9ucyA8LSBwcmVkaWN0KFJGTSx0cmFpbmluZ19zZXQsIHR5cGUgPSAncmVzcG9uc2UnKQ0KDQoNCiNldmFsdWF0aW9ucyBvZiBwcmVkaWN0aW9ucw0KdHJhaW5fcHJlZGljdGlvbnMgPC0gdHJhaW5pbmdfc2V0JT4lDQogIHRyYW5zbXV0ZSgNCiAgICAgICAgYWN0dWFsID0gbnVtX3RvdF9lbmVyZ3lfaGVhdCwNCiAgICAgICAgcHJlZGljdGVkID0gcHJlZGljdGlvbnMNCiAgICAgICAgKQ0KDQoNCnJtc2UgPC0gZnVuY3Rpb24oYWN0dWFsLCBwcmVkaWN0ZWQpew0KICBtc2UgPC0gbWVhbigoYWN0dWFsIC0gcHJlZGljdGVkKSAqKiAyKQ0KICByZXR1cm4oc3FydChtc2UpKQ0KfQ0KDQoNCnByZWRpY3Rpb25zIDwtIHRyYWluX3ByZWRpY3Rpb25zICU+JSBtdXRhdGUocm1zZT1ybXNlKGFjdHVhbCxwcmVkaWN0ZWQpLCBkaWZmZXJlbmNlID0gYWN0dWFsLXByZWRpY3RlZCkgDQoNCg0KI2h5cGVyIHBhcmFtZXRlcnM6IG50cmVlIGFuZCBtdHJ5KG51bWJlciBvZiBmZWF0dXJlcyB0byBkbyksIGFkZCBpbXBvcnRhbmNlID0gVFJVRQ0KDQoNCg0KYGBgDQoNCmBgYHtyfQ0KI2Nyb3NzIHZhbGlkYXRpb24gd2l0aCB2YWxpZGF0aW9uIGRhdGENCiNlbnN1cmUgeW91IGRpc2N1c3MgdGhhdCByYW5kb20gZm9yZXN0IGlzbm5vdCBpbnR1dGF0aXZlLg0KDQpsaWJyYXJ5KGUxMDcxKQ0KI2stZm9sZCBjcm9zcyB2YWxpZGF0aW9uDQp0cmNvbnRyb2wgPC0gdHJhaW5Db250cm9sKG1ldGhvZCA9ICJjdiIsIG51bWJlciA9IDEwLHNlYXJjaD0iZ3JpZCIpDQoNCg0Kc2V0LnNlZWQoMTAwKQ0KDQpyZl9kZWZhdWx0IDwtIHRyYWluKG51bV90b3RfZW5lcmd5X2hlYXR+LiwNCiAgICAgICAgICAgICAgICAgICAgZGF0YSA9IHRyYWluaW5nX3NldCwNCiAgICAgICAgICAgICAgICAgICAgbWV0aG9kID0gInJhbmdlciIsDQogICAgICAgICAgICAgICAgICAgIG1ldHJpYyA9ICJSTVNFIiwNCiAgICAgICAgICAgICAgICAgICAgdHJjb250cm9sID0gdHJjb250cm9sDQogICAgICAgICAgICAgICAgICAgICkNCg0KI0h5cGFyYW1ldHJpc2UgIHVtYmVyIG9mIGZlYXR1cmVzIHRvIHN1YnNldChtdHJ5KQ0KDQojcmZfZGVmYXVsdCA8LSB0cmFpbigpDQoNCg0KDQoNCmBgYA0KYGBge3J9DQojc2VhcmNoIGZvciBiZXN0IG10cnkoMToxOCkNCiNydW4gdGhlbSBhdCBzYW1lIHRpbWUobXRyeSwgbnRyZWUsIG1heG5vZGVzKQ0KI2FkZCB0aGUgc2VxdWVuY2UgDQp0dW5lR3JpZCA8LSBleHBhbmQuZ3JpZCgubXRyeSA9IGMoMTogMTgpKQ0KcmZfbXRyeSA8LSB0cmFpbihudW1fdG90X2VuZXJneV9oZWF0fiwNCiAgICBkYXRhID0gdHJhaW5pbmdfc2V0LA0KICAgIG1ldGhvZCA9ICJyZiIsDQogICAgbWV0cmljID0gIlJNU0UiLA0KICAgIHR1bmVHcmlkID0gdHVuZUdyaWQsDQogICAgdHJjb250cm9sID0gdHJjb250cm9sLA0KICAgIGltcG9ydGFuY2UgPSBUUlVFLA0KICAgIG5vZGVzaXplID0gMTQsDQogICAgbnRyZWUgPSAzMDApDQpwcmludChyZl9tdHJ5KQ0KDQojYmVzdCB2YWx1ZSBmb3IgbXRyeSBiYXNlZCBvbiBiZXN0IFJNU0UNCmJlc3RfbXRyeSA8LSByZl9tdHJ5JGJlc3RUdW5lJG10cnkNCmBgYA0KDQpgYGB7cn0NCiNzZWFyY2ggYmVzdCBtYXggbm9kZXMNCnN0b3JlX21heG5vZGUgPC0gbGlzdCgpDQp0dW5lR3JpZCA8LSBleHBhbmQuZ3JpZCgubXRyeSA9IGJlc3RfbXRyeSkNCmZvciAobWF4bm9kZXMgaW4gYyg1OiAxNSkpIHsNCiAgICByZl9tYXhub2RlIDwtIHRyYWluKG51bV90b3RfZW5lcmd5X2hlYXR+LiwNCiAgICAgICAgZGF0YSA9IHRyYWluaW5nX3NldCwNCiAgICAgICAgbWV0aG9kID0gInJmIiwNCiAgICAgICAgbWV0cmljID0gIlJNU0UiLA0KICAgICAgICB0dW5lR3JpZCA9IHR1bmVHcmlkLA0KICAgICAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2wsDQogICAgICAgIGltcG9ydGFuY2UgPSBUUlVFLA0KICAgICAgICBub2Rlc2l6ZSA9IG4sDQogICAgICAgIG1heG5vZGVzID0gbWF4bm9kZXMsDQogICAgICAgIG50cmVlID1uKQ0KICAgIGN1cnJlbnRfaXRlcmF0aW9uIDwtIHRvU3RyaW5nKG1heG5vZGVzKQ0KICAgIHN0b3JlX21heG5vZGVbW2N1cnJlbnRfaXRlcmF0aW9uXV0gPC0gcmZfbWF4bm9kZQ0KfQ0KcmVzdWx0c19tdHJ5IDwtIHJlc2FtcGxlcyhzdG9yZV9tYXhub2RlKQ0Kc3VtbWFyeShyZXN1bHRzX210cnkpDQojU0VMRUNUTUFYIG5vZGUNCmBgYA0KDQpgYGB7cn0NCiNzZWFyY2ggYmVzdCBudHJlZXMNCnN0b3JlX21heHRyZWVzIDwtIGxpc3QoKQ0KZm9yIChudHJlZSBpbiBjKDI1MCwgMzAwLCAzNTAsIDQwMCwgNDUwLCA1MDAsIDU1MCwgNjAwLCA4MDAsIDEwMDAsIDIwMDApKSB7DQogICAgc2V0LnNlZWQoNTY3OCkNCiAgICByZl9tYXh0cmVlcyA8LSB0cmFpbihudW1fdG90X2VuZXJneV9oZWF0fi4sDQogICAgICAgIGRhdGEgPSB0cmFpbmluZ19zZXQsDQogICAgICAgIG1ldGhvZCA9ICJyZiIsDQogICAgICAgIG1ldHJpYyA9ICJSTVNFIiwNCiAgICAgICAgdHVuZUdyaWQgPSB0dW5lR3JpZCwNCiAgICAgICAgdHJjb250cm9sID0gdHJjb250cm9sLA0KICAgICAgICBpbXBvcnRhbmNlID0gVFJVRSwNCiAgICAgICAgbm9kZXNpemUgPSBuLA0KICAgICAgICBtYXhub2RlcyA9IG4sDQogICAgICAgIG50cmVlID0gbnRyZWUpDQogICAga2V5IDwtIHRvU3RyaW5nKG50cmVlKQ0KICAgIHN0b3JlX21heHRyZWVzW1trZXldXSA8LSByZl9tYXh0cmVlcw0KfQ0KcmVzdWx0c190cmVlIDwtIHJlc2FtcGxlcyhzdG9yZV9tYXh0cmVlcykNCnN1bW1hcnkocmVzdWx0c190cmVlKQ0KDQpgYGANCmBgYHtyfQ0KI2ZpbmFsIG1vZGVsIHdpdGggaHlwYXJhbWV0ZXJzDQpmaXRfcmYgPC0gdHJhaW4obnVtX3RvdF9lbmVyZ3lfaGVhdH4uLA0KICAgIGRhdGFfdHJhaW4sDQogICAgbWV0aG9kID0gInJmIiwNCiAgICBtZXRyaWMgPSAiUk1TRSIsDQogICAgdHVuZUdyaWQgPSB0dW5lR3JpZCwNCiAgICB0cmNvbnRyb2wgPSB0cmNvbnRyb2wsDQogICAgaW1wb3J0YW5jZSA9IFRSVUUsDQogICAgbm9kZXNpemUgPSBuLA0KICAgIG50cmVlID0gbiwNCiAgICBtYXhub2RlcyA9IG4pDQoNCmBgYA0KYGBge3J9DQojZXZhbHV0YXRlIG1vZGVsLCBpbXBvcnRhbmNlIGFuZCByZXNpZHVhbHMNCg0KcHJlZGljdGlvbnMgPC0gcHJlZGljdChmaXRfcmYsIHRyYWluaW5nX3NldCwgdHlwZSA9ICdyZXNwb25zZScpDQoNCiNpbXBvcnRhbmNlIG9mIGNlcnRhaW4gZmVhdHVyZXMNCnZhckltcFBsb3QoZml0X3JmKQ0KDQojcGxvdCByZXNpZHVhbHMNCg0KdHJhaW5fcHJlZGljdGlvbnMgPC0gVHJhaW5TZXQlPiUNCiAgdHJhbnNtdXRlKA0KICAgICAgICBhY3R1YWwgPSBudW1fdG90X2VuZXJneV9oZWF0LA0KICAgICAgICBwcmVkaWN0ZWQgPSBwcmVkaWN0aW9ucw0KICAgICAgICApDQoNCg0Kcm1zZSA8LSBmdW5jdGlvbihhY3R1YWwsIHByZWRpY3RlZCl7DQogIG1zZSA8LSBtZWFuKChhY3R1YWwgLSBwcmVkaWN0ZWQpICoqIDIpDQogIHJldHVybihzcXJ0KG1zZSkpDQp9DQoNCg0KcHJlZGljdGlvbnMgPC0gdHJhaW5fcHJlZGljdGlvbnMgJT4lIG11dGF0ZShybXNlPXJtc2UoYWN0dWFsLHByZWRpY3RlZCksIGRpZmZlcmVuY2UgPSBhY3R1YWwtcHJlZGljdGVkKSANCg0KVHJhaW5TZXQgPC0gVHJhaW5TZXQgJT4lIA0KICBtdXRhdGUocmVzaWR1YWwgPSBwcmVkaWN0aW9ucyAtIG51bV90b3RfZW5lcmd5X2hlYXQpDQoNCiN5IGF4aXMgcm1zZSwgcjIsICB4IGF4aXMsIHZzIGNvbXBsZXhpdHkgb2YgcmFuZG9tIGZvcmVzdCkgc2ltaWxhciB0byBrIG1lYW5zDQoNCmBgYA0KDQoNCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDdHJsK0FsdCtJKi4NCg0KV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDdHJsK1NoaWZ0K0sqIHRvIHByZXZpZXcgdGhlIEhUTUwgZmlsZSkuDQoNClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4NCg==</div>
 
 
 
