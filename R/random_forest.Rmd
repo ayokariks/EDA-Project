@@ -47,7 +47,7 @@ RFM <- randomForest(num_tot_energy_heat~., data=TrainSet, mtry=13)
 predictions <- predict(RFM, TrainSet, type = 'response')
 
 
-#evaluations
+#evaluations of predictions
 train_predictions <- TrainSet%>%
   transmute(
         actual = num_tot_energy_heat,
@@ -69,22 +69,153 @@ TrainSet <- TrainSet %>%
 #hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
 
 
-```
-```{r}
-#tuning hyper paraemeters es use(Caret) do gridsearch,for loop, random search
 
-```
-```{r}
-#model eavalution
-#accuracy, Confusion matrix, recall and precision 
 ```
 
 ```{r}
 #cross validation with validation data
 #ensure you discuss that random forest isnnot intutative.
 
+library(e1071)
+#k-fold cross validation
+trcontrol <- trainControl(method = "cv", number = 10,search="grid")
+
+
+set.seed(100)
+train_dat <- sample(nrow(sk_df), 0.7*nrow(sk_df), replace = FALSE)
+TrainSet <- sk_df[train,]
+TestSet <- sk_df[-train,]
+
+# rf_default <- train(num_tot_energy_heat~.,
+#                     data = TrainSet,
+#                     method = "rf",
+#                     metric = "Rsquared",
+#                     trcontrol = trcontrol
+#                     )
+
+
+rf_rmse <- train(num_tot_energy_heat~.,
+                    data = TrainSet,
+                    method = "rf",
+                    metric = "RMSE",
+                    trcontrol = trcontrol
+                    )
+
+#Hyparametrise  umber of features to subset(mtry)
+
+#rf_default <- train()
+
+
+
 
 ```
+```{r}
+#search for best mtry(1:18)
+tuneGrid <- expand.grid(.mtry = c(1: 18))
+rf_mtry <- train(num_tot_energy_heat~,
+    data = TrainSet,
+    method = "rf",
+    metric = "RMSE",
+    tuneGrid = tuneGrid,
+    trcontrol = trcontrol,
+    importance = TRUE,
+    nodesize = 14,
+    ntree = 300)
+print(rf_mtry)
+
+#best value for mtry based on best RMSE
+best_mtry <- rf_mtry$bestTune$mtry
+```
+
+```{r}
+#search best max nodes
+store_maxnode <- list()
+tuneGrid <- expand.grid(.mtry = best_mtry)
+for (maxnodes in c(5: 15)) {
+    rf_maxnode <- train(num_tot_energy_heat~.,
+        data = TrainSet,
+        method = "rf",
+        metric = "RMSE",
+        tuneGrid = tuneGrid,
+        trcontrol = trcontrol,
+        importance = TRUE,
+        nodesize = 14,
+        maxnodes = maxnodes,
+        ntree = 300)
+    current_iteration <- toString(maxnodes)
+    store_maxnode[[current_iteration]] <- rf_maxnode
+}
+results_mtry <- resamples(store_maxnode)
+summary(results_mtry)
+#SELECTMAX node
+```
+
+```{r}
+#search best ntrees
+store_maxtrees <- list()
+for (ntree in c(250, 300, 350, 400, 450, 500, 550, 600, 800, 1000, 2000)) {
+    set.seed(5678)
+    rf_maxtrees <- train(num_tot_energy_heat~.,
+        data = TrainSet,
+        method = "rf",
+        metric = "RMSE",
+        tuneGrid = tuneGrid,
+        trcontrol = trcontrol,
+        importance = TRUE,
+        nodesize = 14,
+        maxnodes = 24,
+        ntree = ntree)
+    key <- toString(ntree)
+    store_maxtrees[[key]] <- rf_maxtrees
+}
+results_tree <- resamples(store_maxtrees)
+summary(results_tree)
+
+```
+```{r}
+#final model with hyparameters
+fit_rf <- train(num_tot_energy_heat~.,
+    data_train,
+    method = "rf",
+    metric = "RMSE",
+    tuneGrid = tuneGrid,
+    trcontrol = trcontrol,
+    importance = TRUE,
+    nodesize = 14,
+    ntree = 800,
+    maxnodes = 24)
+
+```
+```{r}
+#evalutate model, importance and residuals
+
+predictions <- predict(fit_rf, TrainSet, type = 'response')
+
+#importance
+
+
+#plot residuals
+
+train_predictions <- TrainSet%>%
+  transmute(
+        actual = num_tot_energy_heat,
+        predicted = predictions
+        )
+
+
+rmse <- function(actual, predicted){
+  mse <- mean((actual - predicted) ** 2)
+  return(sqrt(mse))
+}
+
+
+predictions <- train_predictions %>% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
+
+TrainSet <- TrainSet %>% 
+  mutate(residual = predictions - num_tot_energy_heat)
+
+```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
