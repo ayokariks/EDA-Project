@@ -40,24 +40,31 @@ TestSet <- sk_df[-train,]
 
 
         
-#basic Random Forest 
+#basic Random Forest train and fit
 
-RFM <- randomForest(num_tot_energy_heat~., data=TrainSet)
+RFM <- randomForest(num_tot_energy_heat~., data=TrainSet, mtry=13)
 
-# RFM_max <- randomForest(value_max ~ . -value_min, data = train_set, ntree = 100, mtry = 8, importance = TRUE)
-# 
-# 
-# rmse <- function(actual, predicted){
-#   mse <- mean((actual - predicted) ** 2)
-#   return(sqrt(mse))
-# }
-# 
+predictions <- predict(RFM, TrainSet, type = 'response')
 
-train_preds <- Trainset%>%
+
+#evaluations
+train_predictions <- TrainSet%>%
   transmute(
-        time,
-        actual = value_max,
-        predicted_forest = predict(RFM_max, .))
+        actual = num_tot_energy_heat,
+        predicted = predictions
+        )
+
+
+rmse <- function(actual, predicted){
+  mse <- mean((actual - predicted) ** 2)
+  return(sqrt(mse))
+}
+
+
+predictions <- train_predictions %>% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
+
+TrainSet <- TrainSet %>% 
+  mutate(residual = predictions - num_tot_energy_heat)
 
 #hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
 
@@ -65,7 +72,6 @@ train_preds <- Trainset%>%
 ```
 ```{r}
 #tuning hyper paraemeters es use(Caret) do gridsearch,for loop, random search
-
 
 ```
 ```{r}
