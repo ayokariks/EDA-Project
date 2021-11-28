@@ -9,209 +9,134 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
+#import all the libraries
 library(tidyverse)
 library(caret)
 library(rpart)
 library(broom)
 library(rpart)
 library(randomForest)
-# bring in data and inspect data
-#make category (factors)
-df <- read_csv("C:/Users/Admin/EDA-Project/data/sKor_data_tot_v02.csv")
+library(ranger)
+library(e1071)
 
-df <- df %>% mutate(across(starts_with("cat"), as.factor))
-summary(df)
 
 ```
 ```{r}
-#EDA ad # initial Feature Engineering
-#for continuous to numeric e.g the total energy consumption to num_of_households do boxplots
+#read data and convert categrory columns to factors
 
-#for categorical data can utilise heat map to see relationship
+train_full <- read_csv('C:/Users/Admin/EDA-Project/data/sKor_train_data.csv')
 
-
-```
-
-```{r}
-#seed split(train-test 70:30)
-
-#
-#train: 70 train: 30 validation
-set.seed(100)
-train <- sample(nrow(df), 0.7*nrow(df), replace = FALSE)
-training_set<- df[train,]
-testing_set <- df[-train,]
-
-
-train_rf <- sample(nrow(df), 0.1*nrow(df), replace = FALSE)
-train_rf_set <- df[train_rf,]
-        
-#basic Random Forest train and fit
-
-RFM <- randomForest(num_tot_energy_heat~., data=training_set)
-
-predictions <- predict(RFM,training_set, type = 'response')
-
-
-#evaluations of predictions
-train_predictions <- training_set%>%
-  transmute(
-        actual = num_tot_energy_heat,
-        predicted = predictions
-        )
-
-
-rmse <- function(actual, predicted){
-  mse <- mean((actual - predicted) ** 2)
-  return(sqrt(mse))
-}
-
-
-predictions <- train_predictions %>% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
-
-
-#hyper parameters: ntree and mtry(number of features to do), add importance = TRUE
-
-
+train_full <- train_full %>% mutate(across(starts_with("cat"), as.factor))
+summary(train_full)
 
 ```
+
+
 
 ```{r}
 #cross validation with validation data
+
 #ensure you discuss that random forest isnnot intutative.
 
-library(e1071)
-#k-fold cross validatio
-trcontrol <- trainControl(method = "cv", number = 10,search="grid")
+
+train_sample <- sample(nrow(train_full), 0.02*nrow(train_full), replace = FALSE)
+
+training_sample<- train_full[train_sample,]
+#set sequence for the 3 hyper parameters
+num_tree<- seq(250,2000,50)
+min_nodes <- seq(2,10,2)
+m_try <- seq(4,18,2)
+split_rule <- c("variance", "extratrees", "maxstat")
 
 
-set.seed(100)
-
-rf_default <- train(num_tot_energy_heat~.,
-                    data = train_rf_set,
-                    method = "ranger",
-                    metric = "RMSE",
-                    trcontrol = trcontrol
-                    )
-
-#Hyparametrise  umber of features to subset(mtry)
-
-#rf_default <- train()
-
+#add all hyparemeters to one grid
+ranger_grid <-  expand.grid( splitrule=split_rule,
+                         #num.trees = num_tree, 
+                        mtry  = m_try,
+                        min.node.size = min_nodes)
 
 
 
-```
-```{r}
-#search for best mtry(1:18)
-#run them at same time(mtry, ntree, maxnodes)
-#add the sequence 
-tuneGrid <- expand.grid(.mtry = c(1: 18))
-rf_mtry <- train(num_tot_energy_heat~,
-    data = training_set,
-    method = "rf",
-    metric = "RMSE",
-    tuneGrid = tuneGrid,
-    trcontrol = trcontrol,
-    importance = TRUE,
-    nodesize = 14,
-    ntree = 300)
-print(rf_mtry)
+#set the train cross validation
+tr_Control <- trainControl(method = "cv",
+    number = 10,
+    search = "grid")
 
-#best value for mtry based on best RMSE
-best_mtry <- rf_mtry$bestTune$mtry
-```
 
-```{r}
-#search best max nodes
-store_maxnode <- list()
-tuneGrid <- expand.grid(.mtry = best_mtry)
-for (maxnodes in c(5: 15)) {
-    rf_maxnode <- train(num_tot_energy_heat~.,
-        data = training_set,
-        method = "rf",
-        metric = "RMSE",
-        tuneGrid = tuneGrid,
-        trcontrol = trcontrol,
-        importance = TRUE,
-        nodesize = n,
-        maxnodes = maxnodes,
-        ntree =n)
-    current_iteration <- toString(maxnodes)
-    store_maxnode[[current_iteration]] <- rf_maxnode
-}
-results_mtry <- resamples(store_maxnode)
-summary(results_mtry)
-#SELECTMAX node
-```
 
-```{r}
-#search best ntrees
-store_maxtrees <- list()
-for (ntree in c(250, 300, 350, 400, 450, 500, 550, 600, 800, 1000, 2000)) {
-    set.seed(5678)
-    rf_maxtrees <- train(num_tot_energy_heat~.,
-        data = training_set,
-        method = "rf",
-        metric = "RMSE",
-        tuneGrid = tuneGrid,
-        trcontrol = trcontrol,
-        importance = TRUE,
-        nodesize = n,
-        maxnodes = n,
-        ntree = ntree)
-    key <- toString(ntree)
-    store_maxtrees[[key]] <- rf_maxtrees
-}
-results_tree <- resamples(store_maxtrees)
-summary(results_tree)
+#traim mpodel with hypeparameters using grid serch and 10 fold cross validation
+set.seed(123)
+ranger_modelfit <- train(num_tot_energy_heat ~ ., data = train_full, 
+                 method = "ranger", 
+                 trControl = tr_Control,
+                 verbose = FALSE, 
+                 tuneGrid = ranger_grid)
+
+
+#best model from cv
+ranger_best_model <- best(ranger_modelfit$results, metric = "RMSE",
+                       maximize = TRUE)
+ranger_modelfit$results[ranger_best_model, 1:6]
+
+#best model based on results
+ranger_model_best <- ranger(num_tot_energy_heat~., data=training_sample,splitrule="maxstat",
+                        mtry  = 4,
+                        min.node.size = 10)
+
+#maxstat	2	10	5139.151
+#importance(ranger_test)
+#ranger random forest with no hyperparmeters
+ranger_basic <- ranger(num_tot_energy_heat~., data=training_sample)
 
 ```
 ```{r}
-#final model with hyparameters
-fit_rf <- train(num_tot_energy_heat~.,
-    data_train,
-    method = "rf",
-    metric = "RMSE",
-    tuneGrid = tuneGrid,
-    trcontrol = trcontrol,
-    importance = TRUE,
-    nodesize = n,
-    ntree = n,
-    maxnodes = n)
 
+#mightry randomsearchaswell and see computational difference samesteps as grid search
 ```
 ```{r}
-#evalutate model, importance and residuals
+#visualise to compare the different models
+trellis.par.set(caretTheme())
+plot(ranger_modelfit) 
 
-predictions <- predict(fit_rf, training_set, type = 'response')
+#
+ggplot(ranger_modelfit)
+```
+```{r}
 
-#importance of certain features
-varImpPlot(fit_rf)
+#predictions based on the model choosen with training data
 
-#plot residuals
+predictions <- predict(ranger_model_best, train_full, type = 'response')
 
-train_predictions <- TrainSet%>%
+#compare actual to predicted
+
+train_preds <- train_full%>% 
   transmute(
         actual = num_tot_energy_heat,
-        predicted = predictions
-        )
+        predicted_ranger=predictions$predictions)
 
-
+#rmsee
 rmse <- function(actual, predicted){
   mse <- mean((actual - predicted) ** 2)
   return(sqrt(mse))
 }
 
+mse <- function(actual, predicted){
+  mse <- mean((actual - predicted) ** 2)
+  return((mse))
+}
 
-predictions <- train_predictions %>% mutate(rmse=rmse(actual,predicted), difference = actual-predicted) 
+mae <- function(actual, predicted){
+  mae <- mean((actual - predicted))
+  return((mae))
+}
 
-TrainSet <- TrainSet %>% 
-  mutate(residual = predictions - num_tot_energy_heat)
+final_predictions <- train_preds %>% mutate(
+  rmse=rmse(actual,predicted_ranger),
+  mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger))
 
-#y axis rmse, r2,  x axis, vs complexity of random forest) similar to k means
 
 ```
+
 
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
