@@ -78,15 +78,21 @@ ranger_best_model <- best(ranger_modelfit$results, metric = "RMSE",
                        maximize = TRUE)
 ranger_modelfit$results[ranger_best_model, 1:6]
 
+#ranger_modelfit$bestTune
+
 #best model based on results
 ranger_model_best <- ranger(num_tot_energy_heat~., data=training_sample,splitrule="maxstat",
                         mtry  = 4,
                         min.node.size = 10)
 
 #maxstat	2	10	5139.151
+
 #importance(ranger_test)
+
 #ranger random forest with no hyperparmeters
 ranger_basic <- ranger(num_tot_energy_heat~., data=training_sample)
+
+
 
 ```
 ```{r}
@@ -100,6 +106,9 @@ plot(ranger_modelfit)
 
 #
 ggplot(ranger_modelfit)
+
+#residuals vs predicted
+#predicted vs actual
 ```
 ```{r}
 
@@ -134,6 +143,12 @@ final_predictions <- train_preds %>% mutate(
   rmse=rmse(actual,predicted_ranger),
   mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger))
 
+
+#plot actual vs predicted, visaul
+
+#importance value 
+
+#features
 
 ```
 
