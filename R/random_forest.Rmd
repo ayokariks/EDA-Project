@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Ranger Random Forest For South Korean Energy Consumption(Heat)"
 output: html_notebook
 Author: "Ayokunle Arikawe"
 ---
@@ -62,8 +62,8 @@ tr_Control <- trainControl(method = "cv",
     number = 10,
     search = "grid")
 
-
-
+#measure the run time of the hyparameters
+start_time <- Sys.time()
 #traim mpodel with hypeparameters using grid serch and 10 fold cross validation
 set.seed(123)
 ranger_modelfit <- train(num_tot_energy_heat ~ ., data = train_full, 
@@ -71,22 +71,47 @@ ranger_modelfit <- train(num_tot_energy_heat ~ ., data = train_full,
                  trControl = tr_Control,
                  verbose = FALSE, 
                  tuneGrid = ranger_grid)
+end_time <- Sys.time()
 
+time_elapse <- end_time - start_time
 
+time_elapse
+#1.4105 hours
 #best model from cv
-ranger_best_model <- best(ranger_modelfit$results, metric = "RMSE",
-                       maximize = TRUE)
+#ranger_modelfit$bestTune
+#get_best_result(ranger_best_model)
+ranger_best_model <- best(ranger_modelfit$results, metric = "RMSE",  maximize = TRUE)
 ranger_modelfit$results[ranger_best_model, 1:6]
 
-#best model based on results
+
+#varImpPlot()
+#ways to get the best results
+
+#get_best_result
+
+#best model based on results with the importance measured on variance of sreponses and sum 
 ranger_model_best <- ranger(num_tot_energy_heat~., data=training_sample,splitrule="maxstat",
+                        importance = "impurity",
                         mtry  = 4,
                         min.node.size = 10)
 
+
+#used to plot the importance chat of each varaibles
+varImpPlot(ranger_model_best)
+
+importance_features <- ranger_model_best$variable.importance
+
+
 #maxstat	2	10	5139.151
+
 #importance(ranger_test)
+
 #ranger random forest with no hyperparmeters
-ranger_basic <- ranger(num_tot_energy_heat~., data=training_sample)
+#ranger_basic <- ranger(num_tot_energy_heat~., data=training_sample)
+
+
+
+
 
 ```
 ```{r}
@@ -100,6 +125,12 @@ plot(ranger_modelfit)
 
 #
 ggplot(ranger_modelfit)
+
+#residuals vs predicted
+#predicted vs actual
+
+#Variable importance chart where possible.
+i#mportance_features
 ```
 ```{r}
 
@@ -134,7 +165,27 @@ final_predictions <- train_preds %>% mutate(
   rmse=rmse(actual,predicted_ranger),
   mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger))
 
+final_predictions <- final_predictions %>% 
+  mutate(residual = predicted_ranger - actual)
 
+library(ggplot2)
+#true_value and trednline
+final_predictions %>% 
+  ggplot(aes(x = actual, y = residual)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') 
+
+#true_value and trednline
+final_predictions %>% 
+  ggplot(aes(x = predicted_ranger, y = residual)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') 
+
+#Prediction vs True value 
+final_predictions %>% 
+  ggplot(aes(x = predicted_ranger, y = actual)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') 
 ```
 
 
