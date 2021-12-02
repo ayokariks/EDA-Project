@@ -91,6 +91,20 @@ results %>% ggplot(aes(actual,predicted)) +
   xlim(0, max(results$actual))
 #abline isnt going through origin?
 
+## testing the dataset 
+y_hat_test <- predict(train_rpart, newdata = test,
+                      type = "raw")
+test_results <- test %>% transmute(
+  actual = num_tot_energy_heat,
+  predicted = y_hat_test,
+  error = actual-predicted,
+  mse = mean(error^2),
+  rmse = sqrt(mse),
+  mae = mean(actual-predicted)
+)
+  
+##comparing test and train
+trainvtest <- merge(results, test_results, by = 0, all = TRUE)
 
 ## notes to self
 min(results$actual)
