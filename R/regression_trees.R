@@ -112,3 +112,13 @@ min(results$predicted) #should we remove outliers?
 
 results %>% ggplot(aes(actual,error)) + 
   geom_point()
+
+test_results %>% ggplot(aes(actual,predicted)) + 
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1) +
+  ylim(0, max(results$predicted)) +
+  xlim(0, max(results$actual))
+
+#exporting results
+write.csv(results, "../data/reg_tree_train_errors.csv", row.names = FALSE)
+write.csv(test_results, "../data/reg_tree_test_errors.csv", row.names = FALSE)
