@@ -90,16 +90,20 @@ ranger_modelfit$results[ranger_best_model, 1:6]
 #get_best_result
 
 #best model based on results with the importance measured on variance of sreponses and sum 
-ranger_model_best <- ranger(num_tot_energy_heat~., data=training_sample,splitrule="maxstat",
+test_full <- read_csv('C:/Users/Admin/EDA-Project/data/sKor_test_data.csv')
+
+test_full <- test_full %>% mutate(across(starts_with("cat"), as.factor))
+
+ranger_model_best <- ranger(num_tot_energy_heat~., data=test_full,splitrule="maxstat",
                         importance = "impurity",
                         mtry  = 4,
                         min.node.size = 10)
 
+ranger_model_best
 
 #used to plot the importance chat of each varaibles
 varImpPlot(ranger_model_best)
 
-importance_features <- ranger_model_best$variable.importance
 
 
 #maxstat	2	10	5139.151
@@ -109,7 +113,7 @@ importance_features <- ranger_model_best$variable.importance
 #ranger random forest with no hyperparmeters
 #ranger_basic <- ranger(num_tot_energy_heat~., data=training_sample)
 
-
+#importance 
 
 
 
@@ -136,11 +140,11 @@ i#mportance_features
 
 #predictions based on the model choosen with training data
 
-predictions <- predict(ranger_model_best, train_full, type = 'response')
+predictions <- predict(ranger_model_best, test_full, type = 'response')
 
 #compare actual to predicted
 
-train_preds <- train_full%>% 
+test_preds <- test_full%>% 
   transmute(
         actual = num_tot_energy_heat,
         predicted_ranger=predictions$predictions)
@@ -161,7 +165,7 @@ mae <- function(actual, predicted){
   return((mae))
 }
 
-final_predictions <- train_preds %>% mutate(
+final_predictions <- test_preds  %>% mutate(
   rmse=rmse(actual,predicted_ranger),
   mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger))
 
@@ -186,6 +190,28 @@ final_predictions %>%
   ggplot(aes(x = predicted_ranger, y = actual)) + 
   geom_point() + 
   geom_smooth(method = 'lm') 
+
+
+#importance plot
+
+#ggplot(visualization)
+
+importance_features <- ranger_model_best$variable.importance
+
+importance_features
+
+export_preds <- final_predictions%>% 
+  transmute(
+        actual = actual,
+        predictions=predicted_ranger,
+        residual = residual)
+
+#export predictions
+
+write.csv(export_preds,"C:/Users/Admin/EDA-Project/data/ayo_test_random_forest.csv")
+
+
+
 ```
 
 
