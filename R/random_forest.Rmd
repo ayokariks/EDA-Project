@@ -128,7 +128,9 @@ trellis.par.set(caretTheme())
 plot(ranger_modelfit) 
 
 #
-ggplot(ranger_modelfit)
+grid_search_plot <- ggplot(ranger_modelfit)
+
+ggsave(filename="range_fit.PNG", plot=grid_search_plot)
 
 #residuals vs predicted
 #predicted vs actual
@@ -161,36 +163,47 @@ mse <- function(actual, predicted){
 }
 
 mae <- function(actual, predicted){
-  mae <- mean((actual - predicted))
+  mae <- mean(abs(actual - predicted))
   return((mae))
 }
+mape <- function(actual, predicted){
+  mape <- mean(abs(actual - predicted)/actual)*100
+  return((mape))
+}
+
+
 
 final_predictions <- test_preds  %>% mutate(
   rmse=rmse(actual,predicted_ranger),
-  mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger))
+  mse=mse(actual,predicted_ranger),                          mae=mae(actual,predicted_ranger),
+mape=mape(actual,predicted_ranger))
 
 final_predictions <- final_predictions %>% 
   mutate(residual = predicted_ranger - actual)
 
 library(ggplot2)
 #true_value and trednline
-final_predictions %>% 
+actual_residual <- final_predictions %>% 
   ggplot(aes(x = actual, y = residual)) + 
   geom_point() + 
   geom_smooth(method = 'lm') 
 
 #true_value and trednline
-final_predictions %>% 
+predicted_residual <- final_predictions %>% 
   ggplot(aes(x = predicted_ranger, y = residual)) + 
   geom_point() + 
   geom_smooth(method = 'lm') 
 
 #Prediction vs True value 
-final_predictions %>% 
+predicted_actual <- final_predictions %>% 
   ggplot(aes(x = predicted_ranger, y = actual)) + 
   geom_point() + 
   geom_smooth(method = 'lm') 
 
+#save the plots
+ggsave(filename="actual_residual.PNG", plot=actual_residual)
+ggsave(filename="predicted_residual.PNG", plot=predicted_residual)
+ggsave(filename="predicted_actual.PNG", plot=predicted_actual)
 
 #importance plot
 
