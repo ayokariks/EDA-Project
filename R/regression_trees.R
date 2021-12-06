@@ -120,5 +120,12 @@ test_results %>% ggplot(aes(actual,predicted)) +
   xlim(0, max(results$actual))
 
 #exporting results
-write.csv(results, "../data/reg_tree_train_errors.csv", row.names = FALSE)
-write.csv(test_results, "../data/reg_tree_test_errors.csv", row.names = FALSE)
+write.csv(results, "../data/reg_tree_train_results.csv", row.names = FALSE)
+write.csv(test_results, "../data/reg_tree_test_results.csv", row.names = FALSE)
+
+#importance
+varImp_importance <- varImp(train_rpart$finalModel, scale = TRUE)
+write.csv(varImp_importance, "../data/reg_tree_varImp.csv", row.names = TRUE)
+#HOWEVER the variable importances here do not align with common sense as
+#seen in the rpart plot OR the rules below.... 
+rules <- rpart.rules(train_rpart$finalModel)
