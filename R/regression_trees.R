@@ -61,7 +61,8 @@ results <- train %>% transmute(
   error = actual-predicted,
   mse = mean(error^2),
   rmse = sqrt(mse),
-  mae = mean(actual-predicted)
+  mae = mean(abs(actual-predicted)),
+  mape = mean(abs(actual-predicted)/actual*100)
 )
 
 #right now, very high errors lol
@@ -100,7 +101,8 @@ test_results <- test %>% transmute(
   error = actual-predicted,
   mse = mean(error^2),
   rmse = sqrt(mse),
-  mae = mean(actual-predicted)
+  mae = mean(abs(actual-predicted)),
+  mape = mean(abs(actual-predicted)/actual*100)
 )
   
 ##comparing test and train
