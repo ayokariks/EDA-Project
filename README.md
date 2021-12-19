@@ -1,3 +1,4 @@
 # EDA-Project
-Energy Data Analysis Project (Group 8)
-We are comparing the Energy Consumptions of UK Vs south Korea households.
+Energy Data Analysis Project
+Predicting Energy Consumption of South Korean Households.
+ML Algorithms Utilised(Random Forest, Neural Network, Linear Regression and Regression Tree)
